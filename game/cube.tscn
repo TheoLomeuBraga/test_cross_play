@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://b17x1nttdsxtm"]
+
+[ext_resource type="Script" uid="uid://04ll6k7dxfl" path="res://game/colorfull_cube.gd" id="1_la67p"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_j8iog"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_la67p"]
+resource_local_to_scene = true
+shading_mode = 0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_1n6im"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:color")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="Cube" type="MeshInstance3D"]
+mesh = SubResource("BoxMesh_j8iog")
+surface_material_override/0 = SubResource("StandardMaterial3D_la67p")
+script = ExtResource("1_la67p")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_1n6im")

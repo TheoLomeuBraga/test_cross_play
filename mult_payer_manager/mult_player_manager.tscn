@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://db1f5hhcprt27"]
+
+[ext_resource type="Script" uid="uid://cdk5yi8y3gc2w" path="res://mult_payer_manager/mult_player_manager.gd" id="1_ji7b1"]
+
+[node name="MultPlayerManager" type="Node"]
+script = ExtResource("1_ji7b1")
+
+[node name="MultPlayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://bq4eusjrwpa77", "uid://b17x1nttdsxtm")
+spawn_path = NodePath("../MultPlayerNodes")
+spawn_limit = 100
+
+[node name="MultPlayerNodes" type="Node" parent="."]
+
+[connection signal="spawned" from="MultPlayerSpawner" to="MultPlayerSpawner" method="_on_spawned"]
