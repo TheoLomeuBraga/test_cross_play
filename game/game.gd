@@ -10,6 +10,8 @@ func _ready() -> void:
 	my_color.g = rng.randf_range(0.0,1.0)
 	my_color.b = rng.randf_range(0.0,1.0)
 
+
+
 @rpc("any_peer", "call_local", "reliable")
 func add_cube(pos : Vector3, color : Color) -> void:
 	var cube : ColorfullCube = cube_sceane.instantiate()

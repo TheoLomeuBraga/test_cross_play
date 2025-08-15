@@ -8,11 +8,15 @@ const port : int = 49152
 var i = 0
 func _ready() -> void:
 	ip_port = IP.get_local_addresses()[0] + ":" + str(port) 
-	
 
+@rpc("any_peer", "call_local", "reliable")
+func present() -> void:
+	print("player: ",multiplayer.get_unique_id()," has enterd")
 
 func add_player() -> void:
 	print("pear connected")
+	#present()#.rpc_id(multiplayer.get_unique_id())
+	present.rpc_id(multiplayer.get_unique_id())
 
 func fail_to_connect() -> void:
 	print("fail to connect")
@@ -23,6 +27,8 @@ func create_server() -> bool:
 		printerr("can not create server")
 		return false
 	multiplayer.multiplayer_peer = peer
+	
+	add_player()
 	
 	return true
 	
