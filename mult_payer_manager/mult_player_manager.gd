@@ -7,7 +7,8 @@ const port : int = 49152
 
 var i = 0
 func _ready() -> void:
-	ip_port = IP.get_local_addresses()[0] + ":" + str(port) 
+	ip_port = IP.get_local_addresses()[1] + ":" + str(port) 
+	#ip_port = "127.0.0.1:" + str(port) 
 
 @rpc("any_peer", "call_local", "reliable")
 func present() -> void:
@@ -68,8 +69,7 @@ func change_level(level : String):
 	$MultPlayerNodes.add_child(level_node,true)
 
 
-func _on_spawned(node: Node) -> void:
-	print("A")
+
 
 #func _process(delta: float) -> void:
 #	print($MultPlayerNodes.get_child_count())
