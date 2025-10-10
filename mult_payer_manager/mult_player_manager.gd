@@ -3,11 +3,32 @@ extends Node
 
 var ip_port : String
 
-const port : int = 49152
+#const port : int = 49152
+var server_port : int = 0
+
+func get_avaliable_port(start_port = 6000, max_attempts = 1000) -> int:
+	server_port = start_port
+	var attempts = 0
+	
+	while attempts < max_attempts:
+		var server = ENetMultiplayerPeer.new()
+		
+		var result = server.create_server(server_port, 1)
+		
+		if result == OK:
+			print("port",server_port)
+			return server_port
+		
+		
+		server_port += 1
+		attempts += 1
+	
+	return -1  # Nenhuma porta livre encontrada
 
 var i = 0
 func _ready() -> void:
-	ip_port = IP.get_local_addresses()[1] + ":" + str(port) 
+	get_avaliable_port()
+	ip_port = IP.get_local_addresses()[1] + ":" + str(server_port) 
 	#ip_port = "127.0.0.1:" + str(port) 
 
 @rpc("any_peer", "call_local", "reliable")
@@ -23,8 +44,11 @@ func fail_to_connect() -> void:
 	print("fail to connect")
 
 func create_server() -> bool:
+	
+	
+	
 	var peer : ENetMultiplayerPeer = ENetMultiplayerPeer.new()
-	if peer.create_server(port) != 0:
+	if peer.create_server(server_port) != 0:
 		printerr("can not create server")
 		return false
 	multiplayer.multiplayer_peer = peer
@@ -37,6 +61,7 @@ func create_server() -> bool:
 
 
 func create_client(text : String) -> bool:
+	
 	if text.split(":").size() != 2:
 		return false
 	
@@ -44,6 +69,7 @@ func create_client(text : String) -> bool:
 	var port : int = text.split(":")[1].to_int()
 	var peer : ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 	if peer.create_client(ip,port) != 0:
+		print(port)
 		printerr("can not connect to server")
 		return false
 	
@@ -65,6 +91,7 @@ func change_level(level : String):
 	
 	level_node = load(level).instantiate()
 	print("level: ",level)
+	
 	
 	$MultPlayerNodes.add_child(level_node,true)
 
