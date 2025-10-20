@@ -6,7 +6,7 @@ var ip_port : String
 #const port : int = 49152
 var server_port : int = 0
 
-func get_avaliable_port(start_port = 6000, max_attempts = 1000) -> int:
+func get_avaliable_port(start_port = 7000, max_attempts = 1000) -> int:
 	server_port = start_port
 	var attempts = 0
 	
