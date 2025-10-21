@@ -28,7 +28,7 @@ func get_avaliable_port(start_port = 7000, max_attempts = 1000) -> int:
 var i = 0
 func _ready() -> void:
 	get_avaliable_port()
-	ip_port = IP.get_local_addresses()[1] + ":" + str(server_port) 
+	ip_port = IP.get_local_addresses()[1] + ";" + str(server_port) 
 	#ip_port = "127.0.0.1:" + str(port) 
 
 @rpc("any_peer", "call_local", "reliable")
@@ -43,6 +43,24 @@ func add_player() -> void:
 func fail_to_connect() -> void:
 	print("fail to connect")
 
+signal upnp_completed(error)
+func upnp_setup() -> int:
+	# UPNP queries take some time.
+	var upnp : UPNP = UPNP.new()
+	var err : int = upnp.discover()
+	
+	if err != OK:
+		push_error(str(err))
+		return err
+	
+	if upnp.get_gateway() and upnp.get_gateway().is_valid_gateway():
+		upnp.add_port_mapping(server_port, server_port, ProjectSettings.get_setting("application/config/name"), "UDP")
+		upnp.add_port_mapping(server_port, server_port, ProjectSettings.get_setting("application/config/name"), "TCP")
+		upnp_completed.emit(OK)
+		return OK
+	
+	return OK
+
 func create_server() -> bool:
 	
 	
@@ -51,6 +69,10 @@ func create_server() -> bool:
 	if peer.create_server(server_port) != 0:
 		printerr("can not create server")
 		return false
+	
+	if upnp_setup() != OK:
+		printerr("upnp_setup fail")
+	
 	multiplayer.multiplayer_peer = peer
 	
 	add_player()
@@ -62,11 +84,11 @@ func create_server() -> bool:
 
 func create_client(text : String) -> bool:
 	
-	if text.split(":").size() != 2:
+	if text.split(";").size() != 2:
 		return false
 	
-	var ip : String = text.split(":")[0]
-	var port : int = text.split(":")[1].to_int()
+	var ip : String = text.split(";")[0]
+	var port : int = text.split(";")[1].to_int()
 	var peer : ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 	if peer.create_client(ip,port) != 0:
 		print(port)
