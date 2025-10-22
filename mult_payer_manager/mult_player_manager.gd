@@ -13,7 +13,7 @@ func get_avaliable_port(start_port = 7000, max_attempts = 1000) -> int:
 	while attempts < max_attempts:
 		var server = ENetMultiplayerPeer.new()
 		
-		var result = server.create_server(server_port, 1)
+		var result = server.create_server(server_port)
 		
 		if result == OK:
 			print("port",server_port)
@@ -28,8 +28,18 @@ func get_avaliable_port(start_port = 7000, max_attempts = 1000) -> int:
 var i = 0
 func _ready() -> void:
 	get_avaliable_port()
-	ip_port = IP.get_local_addresses()[1] + ";" + str(server_port) 
+	
+	for address in IP.get_local_addresses():
+		if address != "127.0.0.1" and (address.split('.').size() == 4):
+			ip_port=address + ";" + str(server_port) 
+	
+	#print(IP.get_local_interfaces())
+	#print(IP.get_local_addresses())
 	#ip_port = "127.0.0.1:" + str(port) 
+	
+	#var ip : String = IP.get_local_addresses()[1]
+	#ip_port = ip + ";" + str(server_port) 
+	
 
 @rpc("any_peer", "call_local", "reliable")
 func present() -> void:
@@ -63,15 +73,15 @@ func upnp_setup() -> int:
 
 func create_server() -> bool:
 	
-	
+	#if upnp_setup() != OK:
+	#	printerr("upnp_setup fail")
 	
 	var peer : ENetMultiplayerPeer = ENetMultiplayerPeer.new()
 	if peer.create_server(server_port) != 0:
 		printerr("can not create server")
 		return false
 	
-	if upnp_setup() != OK:
-		printerr("upnp_setup fail")
+	
 	
 	multiplayer.multiplayer_peer = peer
 	
