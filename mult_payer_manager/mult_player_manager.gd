@@ -16,7 +16,7 @@ func get_avaliable_port(start_port = 7000, max_attempts = 1000) -> int:
 		var result = server.create_server(server_port)
 		
 		if result == OK:
-			print("port",server_port)
+			print("port: ",server_port)
 			return server_port
 		
 		
@@ -31,7 +31,7 @@ func _ready() -> void:
 	
 	for address in IP.get_local_addresses():
 		if address != "127.0.0.1" and (address.split('.').size() == 4):
-			ip_port=address + ";" + str(server_port) 
+			ip_port=address + ";" + str(server_port)
 	
 	#print(IP.get_local_interfaces())
 	#print(IP.get_local_addresses())
